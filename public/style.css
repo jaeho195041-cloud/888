@@ -1,0 +1,83 @@
+/* Tech Grid Theme (Sample 5) */
+:root {
+    --bg-color: #1e1e1e;
+    --text-color: #00ff00;
+    --border-color: #333;
+    --accent-color: #00ff00;
+    --error-color: #ff3333;
+    --font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+}
+
+h1, h2, h3 {
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 10px;
+    text-transform: uppercase;
+}
+
+h1::before { content: "> "; }
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+input, textarea, button {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--accent-color);
+    padding: 8px 12px;
+    font-family: var(--font-family);
+    margin-bottom: 10px;
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background-color: var(--accent-color);
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.nav {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.nav span { margin-right: 15px; }
+
+.error { color: var(--error-color); }

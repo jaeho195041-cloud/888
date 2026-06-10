@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>777 Simple Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>777_BOARD.EXE</h1>
+            <nav class="nav" id="nav">
+                <!-- 동적으로 채워짐 -->
+            </nav>
+        </header>
+
+        <main id="main-content">
+            <div id="auth-forms">
+                <section>
+                    <h2>User_Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label>Username:</label>
+                            <input type="text" id="login-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password:</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit">Execute_Login</button>
+                    </form>
+                </section>
+
+                <section style="margin-top: 40px; border-top: 1px dashed var(--border-color); padding-top: 20px;">
+                    <h2>New_User_Registration</h2>
+                    <form id="signup-form">
+                        <div class="form-group">
+                            <label>Username:</label>
+                            <input type="text" id="signup-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password:</label>
+                            <input type="password" id="signup-password" required>
+                        </div>
+                        <button type="submit">Initialize_Signup</button>
+                    </form>
+                </section>
+            </div>
+
+            <div id="board-content" style="display: none;">
+                <h2>Welcome, <span id="display-username"></span></h2>
+                <p>Status: Authenticated</p>
+                <p>> 게시판 기능이 곧 구현될 예정입니다.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const nav = document.getElementById('nav');
+        const authForms = document.getElementById('auth-forms');
+        const boardContent = document.getElementById('board-content');
+        const displayUsername = document.getElementById('display-username');
+
+        async function checkStatus() {
+            const res = await fetch('/api/me');
+            const data = await res.json();
+            if (data.loggedIn) {
+                authForms.style.display = 'none';
+                boardContent.style.display = 'block';
+                displayUsername.textContent = data.username;
+                nav.innerHTML = `<span>User: ${data.username}</span> <a href="#" onclick="logout()">[LOGOUT]</a>`;
+            } else {
+                authForms.style.display = 'block';
+                boardContent.style.display = 'none';
+                nav.innerHTML = `<span>Guest_Mode</span>`;
+            }
+        }
+
+        document.getElementById('signup-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            console.log('Attempting signup for:', username);
+            try {
+                const res = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                console.log('Signup response status:', res.status);
+                const data = await res.json();
+                if (data.success) {
+                    alert('Registration successful. Please login.');
+                    e.target.reset();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Signup fetch error:', err);
+                alert('Connection error. Check console for details.');
+            }
+        };
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (data.success) {
+                checkStatus();
+            } else {
+                alert('Login failed: ' + data.error);
+            }
+        };
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            checkStatus();
+        }
+
+        checkStatus();
+    </script>
+</body>
+</html>
